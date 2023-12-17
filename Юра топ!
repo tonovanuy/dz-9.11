@@ -1,0 +1,76 @@
+#include <iostream>
+#include <vector>
+
+struct Item {
+    int weight;
+    int size;
+};
+
+struct Backpack {
+    std::vector<Item> items;
+    int max_size;
+    int max_weight;
+
+    Backpack(int maxSize, int maxWeight) : max_size(maxSize), max_weight(maxWeight) {}
+
+    void addItem(const Item& item) {
+        if (canAddItem(item)) {
+            items.push_back(item);
+            std::cout << "Додано предмет: вага=" << item.weight << ", розмір=" << item.size << std::endl;
+        } else {
+            std::cout << "Помилка: не можна додати предмет в рукзак" << std::endl;
+        }
+    }
+
+    void removeItem(const Item& item) {
+        auto it = std::find(items.begin(), items.end(), item);
+        if (it != items.end()) {
+            items.erase(it);
+            std::cout << "Предмет видалено з рукзака: вага=" << item.weight << ", розмір=" << item.size << std::endl;
+        } else {
+            std::cout << "Помилка: предмет не знайдено в рукзаку" << std::endl;
+        }
+    }
+
+    void displayContents() const {
+        if (items.empty()) {
+            std::cout << "Рукзак порожній" << std::endl;
+        } else {
+            std::cout << "Вміст рукзака:" << std::endl;
+            for (const auto& item : items) {
+                std::cout << "- вага=" << item.weight << ", розмір=" << item.size << std::endl;
+            }
+        }
+    }
+
+private:
+    bool canAddItem(const Item& item) const {
+        int totalWeight = 0;
+        int totalSize = 0;
+        for (const auto& i : items) {
+            totalWeight += i.weight;
+            totalSize += i.size;
+        }
+        return (totalWeight + item.weight) <= max_weight && (totalSize + item.size) <= max_size;
+    }
+};
+
+int main() {
+    Backpack myBackpack(10, 15);
+
+    Item item1{5, 3};
+    Item item2{3, 2};
+    Item item3{4, 4};
+
+    myBackpack.addItem(item1);
+    myBackpack.addItem(item2);
+    myBackpack.addItem(item3);
+
+    myBackpack.displayContents();
+
+    myBackpack.removeItem(item2);
+
+    myBackpack.displayContents();
+
+    return 0;
+}
